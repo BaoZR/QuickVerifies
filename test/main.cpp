@@ -1,11 +1,13 @@
-// C++
+﻿// C++
 #include <iostream>
+#include <filesystem>
 // OpenCV
 #include <opencv.hpp>
 // Self
 #include "src/core/capture.h"
 
 int main(int argc, char* argv[]) {
+	std::filesystem::current_path(std::filesystem::path(argv[0]).parent_path());
 	FaceAlgo::initFaceModels("./models/yunet.onnx", "./models/face_recognizer_fast.onnx", "./data/registFace");
 
 	int id = 0;
