@@ -4,16 +4,21 @@
 # 需要 Cmake 3.8 及以上版本
 cmake_minimum_required (VERSION 3.8)
 
+set(CMAKE_CXX_STANDARD 17)
+
 # 项目名
 project ("QuickVerifies")
 
 # 根据系统设置 OpenCV 的路径
 # 需要手动配置
-if (CMAKE_SYSTEM_NAME MATCHES "Windows")
-	set(OpenCV_DIR "D:/opencv/build")
-elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
-	set(OpenCV_DIR "/usr/local/share/opencv4/")
-endif ()
+#if (CMAKE_SYSTEM_NAME MATCHES "Windows")
+#	set(OpenCV_DIR "D:/opencv/build")
+#elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
+#	set(OpenCV_DIR "/usr/local/share/opencv4/")
+#endif ()
+
+find_package(OpenCV 4.5.5 REQUIRED )
+
 
 # 根据模式设置程序名
 set(EXECUTABLE_NAME "demo")
@@ -46,7 +51,7 @@ set(SOURCE_FILES
 	src/core/result_back.cpp
 )
 
-# 连接静态库
+# 生成静态库
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
 
 # 设置可执行文件
@@ -58,6 +63,12 @@ target_link_libraries(${EXECUTABLE_NAME} ${PROJECT_NAME} ${OpenCV_LIBS})
 # 设置生成文件目录
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 
-
+add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD  
+  # COMMAND_EXPAND_LISTS 
+  COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/data" 
+  COMMAND ${CMAKE_COMMAND} -E copy_directory
+                  "${CMAKE_CURRENT_SOURCE_DIR}/src/models" 
+                  "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/models"
+) 
 
 
